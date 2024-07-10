@@ -1,35 +1,35 @@
 use serde::Deserialize;
 #[derive(Debug, Deserialize)]
 pub struct Colors {
-    color0: String,
-    color1: String,
-    color2: String,
-    color3: String,
-    color4: String,
-    color5: String,
-    color6: String,
-    color7: String,
-    color8: String,
-    color9: String,
-    color10: String,
-    color11: String,
-    color12: String,
-    color13: String,
-    color14: String,
-    color15: String,
+    pub color0: String,
+    pub color1: String,
+    pub color2: String,
+    pub color3: String,
+    pub color4: String,
+    pub color5: String,
+    pub color6: String,
+    pub color7: String,
+    pub color8: String,
+    pub color9: String,
+    pub color10: String,
+    pub color11: String,
+    pub color12: String,
+    pub color13: String,
+    pub color14: String,
+    pub color15: String,
 }
 
 #[derive(Debug, Deserialize)]
 pub struct Special {
-    background: String,
-    foreground: String,
-    cursor: String,
+    pub background: String,
+    pub foreground: String,
+    pub cursor: String,
 }
 
 #[derive(Debug, Deserialize)]
 pub struct Config {
-    wallpaper: String,
-    alpha: String,
-    special: Special,
-    colors: Colors,
+    pub wallpaper: String,
+    pub alpha: String,
+    pub special: Special,
+    pub colors: Colors,
 }
