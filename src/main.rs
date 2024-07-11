@@ -1,9 +1,8 @@
 use clap::{arg, command, value_parser, ArgAction, Command};
 use std::{
     env,
-    fs::{self, File, OpenOptions},
-    io::{BufRead, BufReader, Seek, Write},
-    path::Path,
+    fs::{File, OpenOptions},
+    io::{BufRead, BufReader, Write},
 };
 
 mod data;
@@ -19,18 +18,21 @@ fn main() {
         .get_one::<String>("theme")
         .expect("theme required")
         .to_string();
-    println!("{theme}");
 
+    //Only linux support
     let home = match env::home_dir() {
         Some(path) => path,
         None => panic!("unable to locate home directory!"),
     };
+
     let mut wal_path = home.clone();
     wal_path.push(".cache/wal/colors.json");
-    let file = match File::open(wal_path) {
+    let file = match File::open(&wal_path) {
         Ok(f) => f,
         Err(e) => panic!("Error opening colors.json! {}", e),
     };
+
+    println!("wal config path: {}", wal_path.display());
 
     let reader = BufReader::new(file);
 
@@ -51,50 +53,49 @@ fn main() {
 
     let reader = BufReader::new(file);
 
-    let mut writer = match OpenOptions::new().append(true).open(&path) {
+    let lines: Vec<String> = match reader.lines().collect() {
+        Ok(lines) => lines,
+        Err(e) => panic!("Error reading lines! {}", e),
+    };
+
+    let mut buf: Vec<String> = Vec::new();
+    let mut i = 0;
+    while i < lines.len() {
+        //Remove exisitng config
+        if lines[i].contains("pywal") {
+            buf.pop(); //pop the last \n
+            i += 14;
+            continue;
+        }
+        buf.push(lines[i].clone());
+        i += 1;
+    }
+    let mut writer = match OpenOptions::new().write(true).truncate(true).open(&path) {
         Ok(w) => w,
         Err(e) => panic!("Error opening file! {}", e),
     };
 
-    let line_numb: Vec<usize> = reader
-        .lines()
-        .enumerate()
-        .filter(|(_, l)| {
-            if let Ok(s) = l {
-                return s.contains("pywal");
-            }
-            false
-        })
-        .map(|(i, _)| i)
-        .collect();
-
-    let content = format!(
+    let mut content = buf.join("\n");
+    content.push_str("\n\n");
+    content.push_str(&format!(
         r#"[pywal]
-accent             = #000000 
-accent-active      = #000000 
-accent-inactive    = #000000 
-banner             = #000000 
-border-active      = #{foreground} 
-border-inactive    = #{foreground} 
-header             = #000000 
-highlight          = #000000 
-main               ={background} 
-notification       = #000000
-notification-error = #000000
-subtext            = #{cursor} 
-text               = {cursor}
-"#,
-        background = config.special.background,
-        cursor = config.special.cursor,
-        foreground = config.special.foreground,
-    );
-    println!("{}", content);
+accent             = 000000 
+accent-active      = 000000 
+accent-inactive    = 000000 
+banner             = 000000 
+border-active      = {foreground} 
+border-inactive    = {foreground} 
+header             = 000000 
+highlight          = 000000 
+main               = {background} 
+notification       = 000000
+notification-error = 000000
+subtext            = {cursor} 
+text               = {cursor}"#,
+        background = &config.special.background[1..],
+        cursor = &config.special.cursor[1..],
+        foreground = &config.special.foreground[1..],
+    ));
 
-    if line_numb.is_empty() {
-        let _ = writer.write_all(content.as_bytes());
-    } else {
-        println!("{}", line_numb[0]);
-    }
-
-    //TODO: read data from wal_path, write data to colo.ini starting from line number
+    let _ = writer.write_all(content.as_bytes());
 }
