@@ -2,9 +2,7 @@
 A simple cli tool for applying wal generated colors to spicetify.
 
 ## Installation
-From AUR
-```bash
-yay -S pywal-spicetify
+
 ```
 From Source
 ```bash
