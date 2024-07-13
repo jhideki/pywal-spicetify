@@ -30,6 +30,11 @@ Options:
   -h, --help     Print help
   -V, --version  Print version
 ```
+E.g. to apply wal colors to the Dribblish theme run:,
+```bash
+pywal-spicetify Dribbblish
+```
+`-r` or `--reset` will delete `colors-spicetify.ini` and remove the configuration from `.config/spicetify/Themes/<theme>/colors.ini`
 ## Example Usage
 pywal-spicetify is meant to be called whenever you change wallpapers. Here is how it is set up with `waypaper` <br>
 ```bash
