@@ -3,7 +3,7 @@ A simple cli tool for applying wal generated colors to spicetify. I built this p
 I haven't done any test but it works on my machine... <br>
 Built in rust btw
 ## Demo
-~[Demo](./assets/demo.gif)
+![Demo](./assets/demo.gif)
 
 ## Installation
 From the AUR
@@ -29,7 +29,7 @@ Options:
   -h, --help     Print help
   -V, --version  Print version
 ```
-## Example
+## Example Usage
 pywal-spicetify is meant to be called whenever you change wallpapers. Here is how it is set up with `waypaper` <br>
 ```bash
 [Settings]
