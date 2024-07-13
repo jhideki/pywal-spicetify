@@ -8,3 +8,4 @@ clap = "4.5.9"
 
 [profile.release]
 debug = false
+opt-level = 3
