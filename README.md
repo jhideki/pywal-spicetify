@@ -1,7 +1,7 @@
 # pywal-spicetify
-A simple cli tool for applying wal generated colors to spicetify. I built this purely for personal use. <br>
-I haven't done any test but it works on my machine... <br>
-Built in rust btw
+A simple cli tool for applying wal generated colors to spicetify. I built this purely for personal use. <br><br>
+I haven't done any testing but it works on my machine (i use arch btw)...<br><br>
+Built in rust 
 ## Demo
 ![Demo](./assets/demo.gif)
 
@@ -13,6 +13,7 @@ yay -S pywal-spicetify
 From Source
 ```bash
 git clone https://github.com/jhideki/pywal-spicetify
+cd pywal-spicetify
 cargo build --release
 cp target/release/bin/pywal-spicetify <wherever you want to save the progra>
 export PATH=$PATH:<where you saved pywal-spicetify>
