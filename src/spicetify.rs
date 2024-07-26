@@ -24,11 +24,15 @@ impl Spicetify {
         process::Command::new("spicetify")
             .arg("config")
             .arg("current_theme")
-            .arg(&self.theme);
+            .arg(&self.theme)
+            .status()
+            .unwrap();
         process::Command::new("spicetify")
             .arg("config")
             .arg("color_scheme")
-            .arg("pywal");
+            .arg("pywal")
+            .status()
+            .unwrap();
         match process::Command::new("spicetify").arg("apply").output() {
             Ok(stdout) => {
                 println!("Running spicetify...");
