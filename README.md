@@ -9,6 +9,10 @@ post_command = wal -i $wallpaper && pywal-spicetify text && killall -SIGUSR2 way
 ```
 
 
+https://github.com/user-attachments/assets/a39338c5-d996-465d-bd07-25e409ef2aec
+
+
+
 
 
 ## Installation
