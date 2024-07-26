@@ -95,7 +95,7 @@ text               = {cursor.strip}"#;
     }
 
     pub fn get_config(&self) -> String {
-        let path = &self.cache_path;
+        let path = &self.config_path;
         let file = match File::open(&path) {
             Ok(f) => f,
             Err(e) => panic!("Error opening colors-spicetify.ini! {}", e),
