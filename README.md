@@ -7,7 +7,7 @@ Built in rust
 ```bash
 post_command = wal -i $wallpaper && pywal-spicetify text && killall -SIGUSR2 waybar
 ```
-https://github.com/user-attachments/assets/97c8e1e4-821f-4642-a122-dee6e3c16980
+
 
 
 
