@@ -12,11 +12,12 @@ post_command = wal -i $wallpaper && pywal-spicetify text && killall -SIGUSR2 way
 https://github.com/user-attachments/assets/a39338c5-d996-465d-bd07-25e409ef2aec
 
 
-
-
+## Dependencies
+- `pywal-spicetify` requires a fork of pywal called `pywal-16-colors` Here is the [repo](https://github.com/eylles/pywal16). Support for default `pywal` may be added later. (I created an issue for this but I probably won't ever get to it)
+- Obviously you will need `spicetify' installed with at least one theme.
 
 ## Installation
-From the AUR
+To install rom the AUR run:
 ```bash
 yay -S pywal-spicetify
 ```
