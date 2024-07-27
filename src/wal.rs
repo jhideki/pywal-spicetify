@@ -27,7 +27,12 @@ impl Wal {
     }
 
     pub fn reset(&self) {
-        if !self.config_path.exists() || !self.cache_path.exists() {
+        println!("Resetting...");
+        let files = [&self.config_path, &self.cache_path];
+        let mut existing_files = files.into_iter().filter(|&path| path.exists()).peekable();
+        let do_files_exist = existing_files.peek().is_some();
+
+        if !do_files_exist {
             println!(
                 "Files {} and {} have been removed",
                 self.config_path.display(),
@@ -35,33 +40,14 @@ impl Wal {
             );
             return;
         }
-        println!("Removing file {}", &self.config_path.display());
-        let output = process::Command::new("rm").arg(&self.config_path).output();
-        match output {
-            Ok(output) => {
-                if !output.status.success() {
-                    println!(
-                        "Failed to remove config: {}",
-                        String::from_utf8_lossy(&output.stderr)
-                    );
-                }
+
+        for path in existing_files {
+            println!("Removing file {}", path.display());
+            if let Err(error) = std::fs::remove_file(path) {
+                println!("Failed to remove config: {error}");
             }
-            Err(e) => println!("Failed to run rm {}", e),
         }
 
-        println!("Removing file {}", &self.cache_path.display());
-        let output = process::Command::new("rm").arg(&self.cache_path).output();
-        match output {
-            Ok(output) => {
-                if !output.status.success() {
-                    println!(
-                        "Failed to remove config: {}",
-                        String::from_utf8_lossy(&output.stderr)
-                    );
-                }
-            }
-            Err(e) => println!("Failed to run rm {}", e),
-        }
         self.reload();
     }
 
@@ -107,5 +93,52 @@ text               = {cursor.strip}"#;
         let mut wal_config = String::new();
         let _ = reader.read_to_string(&mut wal_config);
         wal_config
+    }
+}
+
+#[cfg(target_family = "unix")] // to stop this test from running on windows
+#[test]
+fn removes_both_files_in_any_combination() {
+    let wal = Wal::new(std::env::home_dir().unwrap());
+    let files = [&wal.config_path, &wal.cache_path];
+    let paths_and_names = [
+        (None, ""),
+        (Some(&wal.cache_path), "cache"),
+        (Some(&wal.config_path), "config"),
+    ];
+
+    //Ensure that reset deleted files properly
+    wal.reset();
+    for (path, name) in &paths_and_names[1..] {
+        println!("Testing {} {}", path.unwrap().display(), name);
+        assert!(
+            path.is_some_and(|x| !x.exists()),
+            "Had some trouble deleting config files{}",
+            if path.is_some() {
+                format!(" after deleting .{name} file")
+            } else {
+                String::new()
+            }
+        );
+    }
+    for (path, name) in paths_and_names {
+        //This will create a cache file as well (needs pywal-16-colors for wal -w option)
+        wal.set_config();
+
+        if let Some(path) = path {
+            std::fs::remove_file(path).unwrap();
+        }
+        wal.reset();
+        let mut existing_files = files.into_iter().filter(|&path| path.exists());
+        let has_deleted_files = existing_files.next().is_none();
+        assert!(
+            has_deleted_files,
+            "Had some trouble deleting config files{}",
+            if path.is_some() {
+                format!(" after deleting .{name} file")
+            } else {
+                String::new()
+            }
+        );
     }
 }
