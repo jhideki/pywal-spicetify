@@ -27,6 +27,7 @@ impl Wal {
     }
 
     pub fn reset(&self) {
+        println!("Resetting...");
         let files = [&self.config_path, &self.cache_path];
         let mut existing_files = files.into_iter().filter(|&path| path.exists()).peekable();
         let do_files_exist = existing_files.peek().is_some();
@@ -105,11 +106,25 @@ fn removes_both_files_in_any_combination() {
         (Some(&wal.cache_path), "cache"),
         (Some(&wal.config_path), "config"),
     ];
+
+    //Ensure that reset deleted files properly
     wal.reset();
+    for (path, name) in &paths_and_names[1..] {
+        println!("Testing {} {}", path.unwrap().display(), name);
+        assert!(
+            path.is_some_and(|x| !x.exists()),
+            "Had some trouble deleting config files{}",
+            if path.is_some() {
+                format!(" after deleting .{name} file")
+            } else {
+                String::new()
+            }
+        );
+    }
     for (path, name) in paths_and_names {
+        //This will create a cache file as well (needs pywal-16-colors for wal -w option)
         wal.set_config();
-        // Because there's no spicetify config file, create a dummy
-        std::fs::File::create_new(&wal.cache_path).unwrap();
+
         if let Some(path) = path {
             std::fs::remove_file(path).unwrap();
         }
