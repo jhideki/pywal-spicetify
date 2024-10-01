@@ -21,7 +21,7 @@ impl Wal {
 
     pub fn reload(&self) {
         let _ = process::Command::new("wal")
-            .arg("-w")
+            .arg("")
             .output()
             .expect("Failed run wal");
     }
@@ -62,18 +62,18 @@ impl Wal {
                 "Generating colors-spicetify.ini file in {}",
                 &path.display()
             );
-            let content = r#"accent             = {color0.strip} 
-accent-active      = {color2.strip} 
-accent-inactive    = {color3.strip} 
-banner             = {color4.strip} 
-border-active      = {foreground.strip} 
-border-inactive    = {foreground.strip} 
-header             = {foreground.strip} 
-highlight          = {color6.strip} 
-main               = {background.strip} 
+            let content = r#"accent             = {color0.strip}
+accent-active      = {color2.strip}
+accent-inactive    = {color3.strip}
+banner             = {color4.strip}
+border-active      = {foreground.strip}
+border-inactive    = {foreground.strip}
+header             = {foreground.strip}
+highlight          = {color6.strip}
+main               = {background.strip}
 notification       = {color7.strip}
-notification-error = {color8.strip} 
-subtext            = {cursor.strip} 
+notification-error = {color8.strip}
+subtext            = {cursor.strip}
 text               = {cursor.strip}"#;
             let _ = file.write_all(content.as_bytes());
         }
