@@ -21,7 +21,7 @@ impl Wal {
 
     pub fn reload(&self) {
         let _ = process::Command::new("wal")
-            .arg("-w")
+            .arg("-n")
             .output()
             .expect("Failed run wal");
     }
