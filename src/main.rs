@@ -18,6 +18,13 @@ fn main() {
                 .long("reset")
                 .action(clap::ArgAction::SetTrue),
         )
+        .arg(
+            Arg::new("no-restart")
+                .short('n')
+                .long("no-restart")
+                .action(clap::ArgAction::SetTrue)
+                .help("Don't restart Spotify if it's not running"),
+        )
         .arg_required_else_help(true)
         .get_matches();
 
@@ -36,17 +43,18 @@ fn main() {
 
     let wal = Wal::new(home.clone());
     let spicetify = Spicetify::new(home.clone(), &theme);
+    let use_no_restart = matches.get_flag("no-restart");
 
     if matches.get_flag("reset") {
         println!("Resetting configs...");
         wal.reset();
         spicetify.write_config(None);
-        spicetify.reload();
+        spicetify.reload(use_no_restart);
     } else {
         wal.set_config();
         let wal_config = wal.get_config();
 
         spicetify.write_config(Some(wal_config));
-        spicetify.reload();
+        spicetify.reload(use_no_restart);
     }
 }

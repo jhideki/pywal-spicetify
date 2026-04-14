@@ -7,6 +7,26 @@ pub struct Spicetify {
     config_path: PathBuf,
     theme: String,
 }
+
+fn is_spotify_running() -> bool {
+    match process::Command::new("pgrep")
+        .arg("-x")
+        .arg("spotify")
+        .output()
+    {
+        Ok(output) => output.status.success(),
+        Err(_) => {
+            match process::Command::new("ps")
+                .arg("-C")
+                .arg("spotify")
+                .output()
+            {
+                Ok(output) => output.status.success(),
+                Err(_) => false,
+            }
+        }
+    }
+}
 impl Spicetify {
     pub fn new(home: PathBuf, theme: &str) -> Self {
         let mut config_path = home;
@@ -20,7 +40,7 @@ impl Spicetify {
         }
     }
 
-    pub fn reload(&self) {
+    pub fn reload(&self, use_no_restart_flag: bool) {
         process::Command::new("spicetify")
             .arg("config")
             .arg("current_theme")
@@ -33,7 +53,15 @@ impl Spicetify {
             .arg("pywal")
             .status()
             .unwrap();
-        match process::Command::new("spicetify").arg("apply").output() {
+        
+        let mut apply_cmd = process::Command::new("spicetify");
+        apply_cmd.arg("apply");
+        
+        if use_no_restart_flag && !is_spotify_running() {
+            apply_cmd.arg("-n");
+        }
+        
+        match apply_cmd.output() {
             Ok(stdout) => {
                 println!("Running spicetify...");
                 if let Ok(output) = String::from_utf8(stdout.stdout) {
